@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const socket = require("socket.io")
 require("dotenv").config();
 const app = express();
 app.use(express.json());
@@ -30,4 +31,10 @@ app.get('/',(req,res)=>{
 
 app.listen(process.env.PORT,()=>{
     console.log(`our basic express appp is setup now on port ${process.env.PORT}`);
+})
+
+const io = socket(server,{
+    cors:{
+        origin:"http://localhost:"
+    }
 })
