@@ -35,7 +35,7 @@ module.exports.login = async (req,res,next)=>{
 
   const isPasswordValid = await bcrypt.compare(password,isUser.password);
   if(!isPasswordValid)
-  return res.json({msg: "Incorrect password or passwordx", status:false});
+  return res.json({msg: "Incorrect password or password", status:false});
   
   delete isUser.password;
    return res.json({status:true,isUser})    
@@ -44,3 +44,40 @@ module.exports.login = async (req,res,next)=>{
     next(e);
   }
 };
+  
+
+module.exports.setAvatar = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    console.log(userId)
+    const avatarImage = req.body.image;
+    const userData = await User.findByIdAndUpdate(
+      userId,
+      {
+        isAvatarImageSet: true,
+        avatarImage,
+      },
+      { new: true }
+    );
+    return res.json({
+      isSet: userData.isAvatarImageSet,
+      image: userData.avatarImage,
+    });
+  } catch (ex) {
+    next(ex);
+  }
+};
+
+module.exports.getAllUsers = async (req, res, next) => {
+  try{
+    const users = await User.find({_id:{$ne:req.params.id}}).select([
+      "email",
+      "username",
+      "avatarImage",
+      "_id"
+    ])
+    return res.json(users)
+  }catch(ex){
+    next(ex)
+  }
+}
